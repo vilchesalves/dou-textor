@@ -1,5 +1,6 @@
 import textract
 import os.path
+from io import open
 from random import randint
 
 def load_file ():
@@ -9,7 +10,7 @@ def load_file ():
     txt_path = '{}/txt/{}.txt'.format(script_folder, file_name)
 
     if os.path.exists(txt_path):
-        fh = open(txt_path)
+        fh = open(txt_path, encoding="utf-8")
     else:
         extracted_text = textract.process('./dou/{}.pdf'.format(file_name))
         fh = open(txt_path, 'w')
