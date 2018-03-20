@@ -10,30 +10,39 @@ with open('../dates.txt') as file:
         lines.append(line)
 
 regs = [
-    re.compile('(?P<year>[0-9]{4})'),
-    # re.compile('([0-9]{2})\/([0-9]{2})\/([0-9]{4})'),
+    re.compile(r'(?P<month>[0-9]{1,2})[/-](?P<day>[0-9]{1,2})?[/-]?(?P<year>(19|20)?[0-9]{2}?)'),
+    re.compile(r'(?P<day>[0-9]{2}) (?P<month>[a-zA-z]{3,8}) (?P<year>[0-9]{4})'),
+    re.compile(r'(?P<month>[a-zA-Z]{3,8})\.? ?(?P<day>[0-9]{1,2})?,? ?(?P<year>[0-9]{4})'),
+    re.compile(r'(?P<year>[0-9]{4})'),
 ]
+
+i = 0
 
 def match_to_regs (agg, curr):
     if type(agg) is not dict:
-        agg = {
-            'lines': [],
+        agg = match_to_regs({
             'parsed': [],
             'unparsed': [],
-        }
-    agg['lines'].append(curr)
+        }, agg)
+    
+    for reg in regs:
+        match = reg.search(curr)
+        
+        if match:
+            agg['parsed'].append(match.groupdict())
+            break
+    else:
+        agg['unparsed'].append(curr)
+
     return agg
 
-# print(2, lines[:3])
-
-# lines = map(lambda line: match_to_regs(line, regs), lines)
-lines = reduce(match_to_regs, lines[:5])
+lines = reduce(match_to_regs, lines)
 # df = pd.Series(doc)
 
-print(lines)
+print({
+    'parsed': len(lines['parsed']),
+    'unparsed': len(lines['unparsed']),
+})
 
-# print({
-#     'lines': len(lines),
-#     'parsed': len(parsed),
-#     'unparsed': len(unparsed),
-# })
+for date in lines['parsed']:
+    print(date)
