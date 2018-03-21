@@ -12,11 +12,9 @@ with open('../dates.txt') as file:
 regs = [
     re.compile(r'(?P<month>[0-9]{1,2})[/-](?P<day>[0-9]{1,2})?[/-]?(?P<year>(19|20)?[0-9]{2}?)'),
     re.compile(r'(?P<day>[0-9]{2}) (?P<month>[a-zA-z]{3,8}) (?P<year>[0-9]{4})'),
-    re.compile(r'(?P<month>[a-zA-Z]{3,8})\.? ?(?P<day>[0-9]{1,2})?,? ?(?P<year>[0-9]{4})'),
+    re.compile(r'(?P<month>(.(an[au]{2}ry|ebruary|arch|pril|ay|une|uly|ugust|eptember|ctober|ovember|eceme?ber)|(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)))\.? ?(?P<day>[0-9]{1,2})?,? ?(?P<year>[0-9]{4})'),
     re.compile(r'(?P<year>[0-9]{4})'),
 ]
-
-i = 0
 
 def match_to_regs (agg, curr):
     if type(agg) is not dict:
@@ -29,7 +27,7 @@ def match_to_regs (agg, curr):
         match = reg.search(curr)
         
         if match:
-            agg['parsed'].append(match.groupdict())
+            agg['parsed'].append((match.groupdict(), curr))
             break
     else:
         agg['unparsed'].append(curr)
