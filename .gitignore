@@ -1,3 +1,5 @@
 venv/
+v3/
+wpython2/
 .vscode/
 *.pyc
