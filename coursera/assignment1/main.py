@@ -61,7 +61,7 @@ def match_to_regs (agg, curr):
             if len(parsed['year']) == 2:
                 parsed['year'] = '19' + parsed['year']
                 
-            agg['parsed'].append((parsed, curr))
+            agg['parsed'].append(parsed)
             break
     else:
         agg['unparsed'].append(curr)
@@ -72,12 +72,16 @@ lines = reduce(match_to_regs, lines, {
             'parsed': [],
             'unparsed': [],
         })
-# df = pd.Series(doc)
 
-print({
-    'parsed': len(lines['parsed']),
-    'unparsed': len(lines['unparsed']),
-})
+# sort data
+df = pd.DataFrame(lines['parsed']).sort_values(['year', 'month', 'day'])
 
-for i, date in enumerate(lines['parsed']):
-    print(i, date)
+#  insert rank into original array
+for rank, data in enumerate(df.iterrows()):
+    lines['parsed'][data[0]]['rank'] = rank
+
+#  return panda serie for the ranks
+df = pd.DataFrame(lines['parsed'])['rank']
+
+# not really returning, just printing
+print(df)
